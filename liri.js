@@ -1,9 +1,10 @@
 require("dotenv").config();
 
 var keys = require("./keys.js");
-console.log("keys: " ,keys);
+// console.log("keys: " ,keys);
 
-// var spotify = new Spotify(keys.spotify);
+var Spotify = require('node-spotify-api');
+var spotify = new Spotify(keys.spotify);
 
 var Twitter = require('twitter');
 var client = new Twitter(keys.twitter);
@@ -13,37 +14,52 @@ var inquirer = require("inquirer");
 
 inquirer.prompt([
 
-    {
-      type: "list",
-      message: "Liri command?",
-      choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
-      name: "command"
-    }
-  ])
-  .then(function(inquirerResponse) {
+{
+	type: "list",
+	message: "Liri command?",
+	choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
+	name: "command"
+}
+])
+.then(function(inquirerResponse) {
     // If the inquirerResponse confirms, we displays the inquirerResponse's username and pokemon from the answers.
-   console.log("\nCommand " + inquirerResponse.command);
+    console.log("\nCommand " + inquirerResponse.command);
 
     if (inquirerResponse.command === "my-tweets") {
 
-    	console.log("TWEET " + inquirerResponse.command);
-    	console.log("CLIENT " + inquirerResponse.command);
+    	// console.log("TWEET " + inquirerResponse.command);
+    	// console.log("CLIENT " + inquirerResponse.command);
     	displayTwitter();
     }
     else if(inquirerResponse.command === "spotify-this-song"){
-     	console.log("SPOTIFY " + client);
-     	
+    	console.log("SPOTIFY " + inquirerResponse.command);
+    	inquirer.prompt([
+    	{
+    		type: "input",
+    		message: "Song Title?",
+    		name: "name"
+    	},
+    	])
+    	.then(function(inquirerResponse) {
+    		console.log("NAME " + inquirerResponse.name);
+    		mediaString = inquirerResponse.name;
+    		console.log("mediaString" + mediaString);
+    		if (mediaString === ""){
+    			mediaString = "The Sign";
+    		}
+			displaySpotify();
+		});
     }
-  	else if(inquirerResponse.command === "movie-this"){
+    else if(inquirerResponse.command === "movie-this"){
      	// console.log("MOVIE " + inquirerResponse.command);
      	inquirer.prompt([
-		{
-			type: "input",
-			message: "Movie Title?",
-			name: "name"
-		},
-		])
-		.then(function(inquirerResponse) {
+     	{
+     		type: "input",
+     		message: "Movie Title?",
+     		name: "name"
+     	},
+     	])
+     	.then(function(inquirerResponse) {
 			// console.log("NAME " + inquirerResponse.name);
 			mediaString = inquirerResponse.name;
 			// console.log("mediaString" + mediaString);
@@ -52,13 +68,13 @@ inquirer.prompt([
 			}
 			displayMovie();
 		});
-    }
-    else if(inquirerResponse.command === "do-what-it-says"){
+     }
+     else if(inquirerResponse.command === "do-what-it-says"){
      	console.log("ANYTHING " + inquirerResponse.command);
-    }
+     }
 
 
-  });
+ });
 
 
 
@@ -85,23 +101,33 @@ inquirer.prompt([
 
   	function displayTwitter() {
 
-  	// var params = {screen_name: 'nodejs'};
-  	// client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  	// 	if (!error) {
-  	// 		console.log(tweets);
-  	// 	}
-  	// });
-	  	client.get('search/tweets', {q: '@sjbmarek'}, function(error, tweets, response) {
-	  		if (!error) {
-	  			console.log(tweets);
-	  		}
-	  	});
-	           
+  	var params = {screen_name: 'sjbmarek'};
+  	client.get('statuses/user_timeline/', params, function(error, data, response) {
+  		if (!error) {
+  			console.log("@sjbmarek");
+  			for (var i = 0;  i < data.length; i++) {
+  				console.log("--------------------- " + (i+1) + " tweet---------------------")
+  				console.log(data[i].text);
+  			}
+  		}
+  		else{
+  			console.log("Error: " + error);
+  			return;
+  		}
+  	});        
 	};
 
 	function displaySpotify() {
-           
-    };
+		console.log("mediaString in displaySpotify function: " + mediaString);
+
+		spotify.search({ type: 'track', query: mediaString, limit: 5 }, function(err, data) {
+			if (err) {
+				return console.log('Error: ' + err);
+			} 
+			console.log(data); 
+		});
+
+	};
 
 	function displayMovie() {
 	    var request = require("request");
@@ -121,35 +147,20 @@ inquirer.prompt([
 		    console.log("Title: " + JSON.parse(body).Title);
 		    console.log("Release Year: " + JSON.parse(body).Year);
 		    console.log("IMDB Rating: " + JSON.parse(body).Rated);
-		    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings);
-		    // Fix Rotten Tomatoes console log.
+		    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
 		    console.log("Country Where Produced: " + JSON.parse(body).Country);
 		    console.log("Language: " + JSON.parse(body).Language);
 		    console.log("Plot: " + JSON.parse(body).Plot);
 		    console.log("Actors: " + JSON.parse(body).Actors);
-		    // console.log("object " + body);
+		    // console.log(JSON.parse(body));
 			}
+			else{
+	  			console.log("Error: " + error);
+	  			return;
+  		}
 		});
-
 	};
 
 	function displaySelection() {
            
     };
-
-// // This function asks for the media title
-// 	function mediaName() {
-// 		var movieinfo = require("inquirer");
-
-// 		inquirer.prompt([
-// 		{
-// 			type: "input",
-// 			message: "Movie or Song Title?",
-// 			name: "name"
-// 		},
-// 		])
-// 		.then(function(inquirerResponse) {
-// 			console.log("NAME " + inquirerResponse.name);
-// 		});
-// 		//maybe set .name to a new variable here.
-// 	}
