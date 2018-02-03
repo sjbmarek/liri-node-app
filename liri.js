@@ -23,13 +23,30 @@ inquirer.prompt([
 ])
 .then(function(inquirerResponse) {
     // If the inquirerResponse confirms, we displays the inquirerResponse's username and pokemon from the answers.
-    console.log("\nCommand " + inquirerResponse.command);
+    // console.log("\nCommand " + inquirerResponse.command);
 
     if (inquirerResponse.command === "my-tweets") {
 
     	// console.log("TWEET " + inquirerResponse.command);
     	// console.log("CLIENT " + inquirerResponse.command);
-    	displayTwitter();
+    	inquirer.prompt([
+    	{
+    		type: "input",
+    		message: "Twitter Screen Name (do NOT include @) ?",
+    		name: "name"
+    	},
+    	])
+    	.then(function(inquirerResponse) {
+    		// console.log("NAME " + inquirerResponse.name);
+    		// mediaString = inquirerResponse.name;
+    		// console.log("mediaString" + mediaString);
+    		if (mediaString === ""){
+    			mediaString = "sjbmarek";
+    		}
+    		displayTwitter();
+    	});
+
+    	// displayTwitter();
     }
     else if(inquirerResponse.command === "spotify-this-song"){
     	console.log("SPOTIFY " + inquirerResponse.command);
@@ -101,20 +118,21 @@ inquirer.prompt([
 
   	function displayTwitter() {
 
-  	var params = {screen_name: 'sjbmarek'};
+  	var params = {screen_name: mediaString};
   	client.get('statuses/user_timeline/', params, function(error, data, response) {
   		if (!error) {
-  			console.log("@sjbmarek");
+  			console.log("\nTweets for screen name: " + mediaString);
   			for (var i = 0;  i < data.length; i++) {
-  				console.log("--------------------- " + (i+1) + " tweet---------------------")
+  				console.log("\n--------------------- tweet " + (i+1) + "------------------------")
   				console.log(data[i].text);
-  			}
+  				console.log("Created: " + data[i].created_at + " by " + data[i].user.name);
+  			};  
   		}
   		else{
   			console.log("Error: " + error);
   			return;
   		}
-  	});        
+  	});       
 	};
 
 	function displaySpotify() {
@@ -144,7 +162,8 @@ inquirer.prompt([
 		  // If the request is successful
 		  if (!error && response.statusCode === 200) {
 
-		    console.log("Title: " + JSON.parse(body).Title);
+		    console.log("\nTitle: " + JSON.parse(body).Title);
+		    console.log('---------------------------------------------------')
 		    console.log("Release Year: " + JSON.parse(body).Year);
 		    console.log("IMDB Rating: " + JSON.parse(body).Rated);
 		    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
