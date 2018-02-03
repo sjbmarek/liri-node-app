@@ -7,6 +7,7 @@ console.log("keys: " ,keys);
 
 var Twitter = require('twitter');
 var client = new Twitter(keys.twitter);
+var mediaString = "";
 
 var inquirer = require("inquirer");
 
@@ -27,14 +28,30 @@ inquirer.prompt([
 
     	console.log("TWEET " + inquirerResponse.command);
     	console.log("CLIENT " + inquirerResponse.command);
+    	displayTwitter();
     }
     else if(inquirerResponse.command === "spotify-this-song"){
      	console.log("SPOTIFY " + client);
-     	mediaName();
+     	
     }
   	else if(inquirerResponse.command === "movie-this"){
-     	console.log("MOVIE " + inquirerResponse.command);
-     	mediaName();
+     	// console.log("MOVIE " + inquirerResponse.command);
+     	inquirer.prompt([
+		{
+			type: "input",
+			message: "Movie Title?",
+			name: "name"
+		},
+		])
+		.then(function(inquirerResponse) {
+			// console.log("NAME " + inquirerResponse.name);
+			mediaString = inquirerResponse.name;
+			// console.log("mediaString" + mediaString);
+			if (mediaString === ""){
+				mediaString = "Mr. Nobody";
+			}
+			displayMovie();
+		});
     }
     else if(inquirerResponse.command === "do-what-it-says"){
      	console.log("ANYTHING " + inquirerResponse.command);
@@ -44,36 +61,95 @@ inquirer.prompt([
   });
 
 
+
+
+ //  	function mediaName() {
+	// 	// var inquirer = require("inquirer");
+
+	// 	inquirer.prompt([
+	// 	{
+	// 		type: "input",
+	// 		message: "Movie or Song Title?",
+	// 		name: "name"
+	// 	},
+	// 	])
+	// 	.then(function(inquirerResponse) {
+	// 		console.log("NAME " + inquirerResponse.name);
+	// 		mediaString = inquirerResponse.name;
+	// 		console.log("mediaString" + mediaString);
+
+	// 	});
+	// }
+
   // Functions for each liri selection
 
-function displayTwitter() {
+  	function displayTwitter() {
+
+  	// var params = {screen_name: 'nodejs'};
+  	// client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  	// 	if (!error) {
+  	// 		console.log(tweets);
+  	// 	}
+  	// });
+	  	client.get('search/tweets', {q: '@sjbmarek'}, function(error, tweets, response) {
+	  		if (!error) {
+	  			console.log(tweets);
+	  		}
+	  	});
+	           
+	};
+
+	function displaySpotify() {
            
-        };
+    };
 
-function displaySpotify() {
+	function displayMovie() {
+	    var request = require("request");
+		// Create a variable for holding the movie name
+		var movieName = mediaString;
+		// console.log("first movie name ", movieName);
+		var modifiedmovieName = movieName.split(' ').join('+');
+		// console.log("second movie name ", modifiedmovieName);
+		// Run a request to the OMDB API with the movie specified
+		var queryUrl = "http://www.omdbapi.com/?t=" + modifiedmovieName + "&y=&plot=short&apikey=trilogy";
+		// console.log(queryUrl);
+		request(queryUrl, function(error, response, body) {
+
+		  // If the request is successful
+		  if (!error && response.statusCode === 200) {
+
+		    console.log("Title: " + JSON.parse(body).Title);
+		    console.log("Release Year: " + JSON.parse(body).Year);
+		    console.log("IMDB Rating: " + JSON.parse(body).Rated);
+		    console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings);
+		    // Fix Rotten Tomatoes console log.
+		    console.log("Country Where Produced: " + JSON.parse(body).Country);
+		    console.log("Language: " + JSON.parse(body).Language);
+		    console.log("Plot: " + JSON.parse(body).Plot);
+		    console.log("Actors: " + JSON.parse(body).Actors);
+		    // console.log("object " + body);
+			}
+		});
+
+	};
+
+	function displaySelection() {
            
-        };
+    };
 
-function displayMovie() {
-           
-        };
+// // This function asks for the media title
+// 	function mediaName() {
+// 		var movieinfo = require("inquirer");
 
-function displaySelection() {
-           
-        };
-
-function mediaName() {
-	var inquirer = require("inquirer");
-
-	inquirer.prompt([
-	{
-		type: "input",
-		message: "Movie or Song Title?",
-		name: "name"
-	},
-	])
-	.then(function(inquirerResponse) {
-		console.log("NAME " + inquirerResponse.name);
-	});
-	//maybe set .name to a new variable here.
-}
+// 		inquirer.prompt([
+// 		{
+// 			type: "input",
+// 			message: "Movie or Song Title?",
+// 			name: "name"
+// 		},
+// 		])
+// 		.then(function(inquirerResponse) {
+// 			console.log("NAME " + inquirerResponse.name);
+// 		});
+// 		//maybe set .name to a new variable here.
+// 	}
