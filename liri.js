@@ -38,7 +38,7 @@ inquirer.prompt([
     	])
     	.then(function(inquirerResponse) {
     		// console.log("NAME " + inquirerResponse.name);
-    		// mediaString = inquirerResponse.name;
+    		mediaString = inquirerResponse.name;
     		// console.log("mediaString" + mediaString);
     		if (mediaString === ""){
     			mediaString = "sjbmarek";
@@ -206,4 +206,4 @@ inquirer.prompt([
  		 });
 
 
-		}
+	}
