@@ -1,6 +1,6 @@
 # liri-node-app
 
-This app the following npm resources:
+This app uses the following npm resources:
    request, 
    twitter,
    spotify, 
