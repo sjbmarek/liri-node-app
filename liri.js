@@ -62,7 +62,7 @@ inquirer.prompt([
     		mediaString = inquirerResponse.name;
     		// console.log("mediaString" + mediaString);
     		if (mediaString === ""){
-    			mediaString = "The Sign by Ace of Base";
+    			mediaString = "The Sign Ace of Base";
     		}
 			displaySpotify();
 		});
@@ -119,7 +119,7 @@ inquirer.prompt([
 	function displaySpotify() {
 		// console.log("mediaString in displaySpotify function: " + mediaString);
 
-		spotify.search({ type: 'track', query: mediaString, limit: 1 }, function(err, data) {
+		spotify.search({ type: 'track', query: mediaString,}, function(err, data) {
 			if (err) {
 				return console.log('Error: ' + err);
 			} 
