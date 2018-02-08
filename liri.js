@@ -119,7 +119,7 @@ inquirer.prompt([
 	function displaySpotify() {
 		// console.log("mediaString in displaySpotify function: " + mediaString);
 
-		spotify.search({ type: 'track', query: mediaString,}, function(err, data) {
+		spotify.search({ type: 'track', query: mediaString, limit: 1}, function(err, data) {
 			if (err) {
 				return console.log('Error: ' + err);
 			} 
