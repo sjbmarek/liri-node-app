@@ -62,7 +62,7 @@ inquirer.prompt([
     		mediaString = inquirerResponse.name;
     		// console.log("mediaString" + mediaString);
     		if (mediaString === ""){
-    			mediaString = "The Sign by Ace of Base";
+    			mediaString = "The Sign Ace of Base";
     		}
 			displaySpotify();
 		});
