@@ -39,5 +39,5 @@ add Spotify and Twitter API keys
 
 3.  Usage
 
-   $ node liri.js
+      $ node liri.js
   
